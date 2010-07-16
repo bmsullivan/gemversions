@@ -9,6 +9,7 @@
   </head>
   <body>
     <div id="container">
+      <%= link_to "GEMVERSIONS", :root %>
       <div id="user_nav">
         <% if user_signed_in? %>
           Signed in as <%= current_user.email %>. Not you?
