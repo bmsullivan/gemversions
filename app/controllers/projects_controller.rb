@@ -46,24 +46,7 @@ class ProjectsController < ApplicationController
     @project = Project.new(params[:project])
     @project.user = current_user
 
-    params[:gemset].readlines.each do |line|
-      unless line =~ /^\#.*$/
-        name = line.split(' ')[0]
-        version = line.split('-v')[1]
-        jem = GemVersions::Gem.find_by_name(name)
-        if jem.nil?
-          jem = GemVersions::Gem.new(:name => name)
-          jem.save
-        end
-        matching_versions = jem.gem_versions.find_all{|item| item.version_number == version}
-        if matching_versions.empty?
-          gem_version = GemVersion.new(:gem_id => jem.id, :version_number => version)
-        else
-          gem_version = matching_versions[0]
-        end
-        @project.gem_versions << gem_version
-      end
-    end
+    @project.gem_versions = create_gem_version_list_from_gemset(params[:gemset])
 
     respond_to do |format|
       if @project.save
@@ -80,6 +63,8 @@ class ProjectsController < ApplicationController
   # PUT /projects/1.xml
   def update
     @project = Project.find(params[:id])
+
+    @project.gem_versions = create_gem_version_list_from_gemset(params[:gemset])
 
     respond_to do |format|
       if @project.update_attributes(params[:project])
@@ -102,5 +87,20 @@ class ProjectsController < ApplicationController
       format.html { redirect_to(projects_url) }
       format.xml  { head :ok }
     end
+  end
+
+  private
+
+  def create_gem_version_list_from_gemset(file)
+    gem_versions = Array.new
+    file.readlines.each do |line|
+      unless line =~ /^\#.*$/
+        name = line.split(' ')[0]
+        version = line.split('-v')[1].chomp
+        gem_version = GemVersion.construct_from_name_and_version(name, version)
+        gem_versions << gem_version
+      end
+    end
+    gem_versions
   end
 end
