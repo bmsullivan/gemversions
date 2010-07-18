@@ -46,6 +46,25 @@ class ProjectsController < ApplicationController
     @project = Project.new(params[:project])
     @project.user = current_user
 
+    params[:gemset].readlines.each do |line|
+      unless line =~ /^\#.*$/
+        name = line.split(' ')[0]
+        version = line.split('-v')[1]
+        jem = GemVersions::Gem.find_by_name(name)
+        if jem.nil?
+          jem = GemVersions::Gem.new(:name => name)
+          jem.save
+        end
+        matching_versions = jem.gem_versions.find_all{|item| item.version_number == version}
+        if matching_versions.empty?
+          gem_version = GemVersion.new(:gem_id => jem.id, :version_number => version)
+        else
+          gem_version = matching_versions[0]
+        end
+        @project.gem_versions << gem_version
+      end
+    end
+
     respond_to do |format|
       if @project.save
         format.html { redirect_to(@project, :notice => 'Project was successfully created.') }
