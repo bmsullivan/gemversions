@@ -16,7 +16,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1
   # GET /projects/1.xml
   def show
-    @project = Project.find(params[:id], :include => :gem_versions)
+    @project = Project.find(params[:id], :include => {:gem_versions => :gem})
 
     respond_to do |format|
       format.html # show.html.erb
@@ -46,7 +46,7 @@ class ProjectsController < ApplicationController
     @project = Project.new(params[:project])
     @project.user = current_user
 
-    @project.gem_versions = create_gem_version_list_from_gemset(params[:gemset])
+    @project.gem_versions = create_gem_version_list_from_gemset(params[:gemset]) unless params[:gemset].nil?
 
     respond_to do |format|
       if @project.save
@@ -64,7 +64,7 @@ class ProjectsController < ApplicationController
   def update
     @project = Project.find(params[:id])
 
-    @project.gem_versions = create_gem_version_list_from_gemset(params[:gemset])
+    @project.gem_versions = create_gem_version_list_from_gemset(params[:gemset]) unless params[:gemset].nil?
 
     respond_to do |format|
       if @project.update_attributes(params[:project])
