@@ -1,0 +1,9 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  gem_id: 1
+  version_number: MyString
+
+two:
+  gem_id: 1
+  version_number: MyString

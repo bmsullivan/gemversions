@@ -9,7 +9,25 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100716013243) do
+ActiveRecord::Schema.define(:version => 20100717193055) do
+
+  create_table "gem_versions", :force => true do |t|
+    t.integer  "gem_id"
+    t.string   "version_number"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "gem_versions_projects", :id => false, :force => true do |t|
+    t.integer "gem_version_id"
+    t.integer "project_id"
+  end
+
+  create_table "gems", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "projects", :force => true do |t|
     t.string   "name"

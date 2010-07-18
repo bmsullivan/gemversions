@@ -1,3 +1,6 @@
+require 'nokogiri'
+require 'open-uri'
+
 class ProjectsController < ApplicationController
   # GET /projects
   # GET /projects.xml
@@ -13,7 +16,7 @@ class ProjectsController < ApplicationController
   # GET /projects/1
   # GET /projects/1.xml
   def show
-    @project = Project.find(params[:id])
+    @project = Project.find(params[:id], :include => :gem_versions)
 
     respond_to do |format|
       format.html # show.html.erb

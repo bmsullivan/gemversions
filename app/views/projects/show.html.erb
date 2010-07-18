@@ -1,6 +1,21 @@
 <p>
-  <b>Name:</b>
+  <b>Project Name:</b>
   <%=h @project.name %>
+
+  <h4>Gems</h4>
+  <table border="1">
+    <tr>
+      <th>Name</th>
+      <th>Version</th>
+    </tr>
+    <% @project.gem_versions.each do |gem_version| %>
+      <% homepage_link = Nokogiri::XML(open("http://rubygems.org/api/v1/gems/#{gem_version.gem.name}.xml")).css("homepage-uri")[0].content %>
+      <tr>
+        <td><a href="<%= homepage_link %>"><%= gem_version.gem.name %></a></td>
+        <td><a href="http://rubygems.org/gems/<%= gem_version.gem.name %>/versions/<%= gem_version.version_number %>"><%= gem_version.version_number %></a></td>
+      </tr>
+    <% end %>
+  </table>
 </p>
 
 
